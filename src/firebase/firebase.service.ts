@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as admin from 'firebase-admin';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const admin: any = require('firebase-admin');
 
 @Injectable()
 export class FirebaseService {
-  private app: admin.app.App;
+  private app: any;
 
   constructor(private readonly configService: ConfigService) {
     const projectId = this.configService.get<string>('FIREBASE_PROJECT_ID');
@@ -22,7 +23,7 @@ export class FirebaseService {
     });
   }
 
-  auth(): admin.auth.Auth {
+  auth(): any {
     return this.app.auth();
   }
 

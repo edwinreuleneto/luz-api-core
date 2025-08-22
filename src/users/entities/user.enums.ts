@@ -1,0 +1,13 @@
+export enum UserRole {
+  ADMIN = 'ADMIN',
+  ADVOGADO = 'ADVOGADO',
+  ESTAGIARIO = 'ESTAGIARIO',
+  FINANCEIRO = 'FINANCEIRO',
+  CLIENTE = 'CLIENTE',
+}
+
+export enum AccountStatus {
+  ACTIVE = 'ACTIVE',
+  SUSPENDED = 'SUSPENDED',
+  DELETED = 'DELETED',
+}
