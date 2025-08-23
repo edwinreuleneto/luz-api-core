@@ -23,23 +23,32 @@ export class FilesService {
       eTag: dto.eTag,
     };
 
-    const existing = await (this.prisma.client as any).file.findUnique({ where: { url: dto.url } });
+    const existing = await this.prisma.client.file.findUnique({
+      where: { url: dto.url },
+    });
     if (existing) return existing as unknown as FileEntity;
 
     if (dto.id) {
-      return (await (this.prisma.client as any).file.create({ data })) as unknown as FileEntity;
+      return (await this.prisma.client.file.create({
+        data,
+      })) as unknown as FileEntity;
     }
 
     const { id, ...withoutId } = data;
-    return (await (this.prisma.client as any).file.create({ data: withoutId })) as unknown as FileEntity;
+    return (await this.prisma.client.file.create({
+      data: withoutId,
+    })) as unknown as FileEntity;
   }
 
   async get(id: string): Promise<FileEntity> {
-    return (await (this.prisma.client as any).file.findUniqueOrThrow({ where: { id } })) as unknown as FileEntity;
+    return (await this.prisma.client.file.findUniqueOrThrow({
+      where: { id },
+    })) as unknown as FileEntity;
   }
 
   async remove(id: string): Promise<FileEntity> {
-    return (await (this.prisma.client as any).file.delete({ where: { id } })) as unknown as FileEntity;
+    return (await this.prisma.client.file.delete({
+      where: { id },
+    })) as unknown as FileEntity;
   }
 }
-

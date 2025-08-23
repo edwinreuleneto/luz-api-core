@@ -1,0 +1,56 @@
+// Services
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { ContractEntity } from './entities/contract.entity';
+import { CreateContractDto } from './dto/create-contract.dto';
+import { UpdateContractDto } from './dto/update-contract.dto';
+
+@Injectable()
+export class ContractsService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  private transform(contract: any): ContractEntity {
+    return {
+      ...contract,
+      clientId: contract.clientId ?? undefined,
+      fileId: contract.fileId ?? undefined,
+    };
+  }
+
+  async create(dto: CreateContractDto): Promise<ContractEntity> {
+    const contract = await this.prisma.client.contract.create({ data: dto });
+    return this.transform(contract);
+  }
+
+  async findOne(id: string): Promise<ContractEntity> {
+    const contract = await this.prisma.client.contract.findUniqueOrThrow({
+      where: { id },
+    });
+    return this.transform(contract);
+  }
+
+  async update(id: string, dto: UpdateContractDto): Promise<ContractEntity> {
+    const contract = await this.prisma.client.contract.update({
+      where: { id },
+      data: dto,
+    });
+    return this.transform(contract);
+  }
+
+  async setFile(id: string, fileId: string) {
+    return this.prisma.client.contract.update({
+      where: { id },
+      data: { fileId },
+      select: { id: true, fileId: true },
+    });
+  }
+
+  async addResponsible(contractId: string, userId: string) {
+    return this.prisma.client.contractResponsible.upsert({
+      where: { contractId_userId: { contractId, userId } },
+      update: {},
+      create: { contractId, userId },
+      select: { contractId: true, userId: true },
+    });
+  }
+}

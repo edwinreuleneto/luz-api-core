@@ -24,7 +24,7 @@ export class UserEntity {
   oab?: string;
 
   @ApiProperty({ required: false })
-  profilePhoto?: string;
+  profileFileId?: string;
 
   @ApiProperty({ default: false })
   mfaEnabled: boolean;

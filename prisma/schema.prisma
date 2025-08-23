@@ -69,6 +69,11 @@ enum AccountStatus {
   DELETED
 }
 
+enum PersonType {
+  PF
+  PJ
+}
+
 model User {
   id             String        @id @default(uuid())
   firebaseUid    String        @unique
@@ -77,7 +82,8 @@ model User {
   phone          String?
   cpf            String?       @unique
   oab            String?       @unique
-  profilePhoto   String?
+  profileFileId  String?
+  profileFile    File?         @relation(fields: [profileFileId], references: [id], onDelete: SetNull)
   mfaEnabled     Boolean       @default(false)
   lastLogin      DateTime?
   failedAttempts Int           @default(0)
@@ -91,4 +97,55 @@ model User {
   consentLgpd    Boolean       @default(false)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
+
+  responsibleContracts ContractResponsible[]
+}
+
+model Client {
+  id             String   @id @default(uuid())
+  organizationId String
+  personType     PersonType
+  fullName       String?
+  companyName    String?
+  cpf            String?   @unique
+  cnpj           String?   @unique
+  email          String?
+  phone          String?
+  website        String?
+  notes          String?
+
+  logoFileId     String?
+  logoFile       File?     @relation(fields: [logoFileId], references: [id], onDelete: SetNull)
+
+  docMainFileId  String?
+  docMainFile    File?     @relation(fields: [docMainFileId], references: [id], onDelete: SetNull)
+
+  contracts      Contract[]
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Contract {
+  id             String   @id @default(uuid())
+  title          String
+  organizationId String
+  clientId       String?
+  client         Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  fileId         String?
+  file           File?    @relation(fields: [fileId], references: [id], onDelete: SetNull)
+
+  responsibleUsers ContractResponsible[]
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model ContractResponsible {
+  contractId String
+  userId     String
+  contract   Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([contractId, userId])
 }
