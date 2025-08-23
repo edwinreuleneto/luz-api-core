@@ -7,23 +7,43 @@ import { UserEntity } from './entities/user.entity';
 export class UsersService {
   constructor(private readonly prismaService: PrismaService) {}
 
+  private transformPrismaUser(prismaUser: any): UserEntity {
+    return {
+      ...prismaUser,
+      phone: prismaUser.phone ?? undefined,
+      cpf: prismaUser.cpf ?? undefined,
+      oab: prismaUser.oab ?? undefined,
+      profilePhoto: prismaUser.profilePhoto ?? undefined,
+      lastLogin: prismaUser.lastLogin ?? undefined,
+      department: prismaUser.department ?? undefined,
+      unit: prismaUser.unit ?? undefined,
+      supervisorId: prismaUser.supervisorId ?? undefined,
+    };
+  }
+
   async create(firebaseUid: string, data: CreateUserDto): Promise<UserEntity> {
-    return this.prismaService.client.user.create({
+    // Extract password from data if it exists (for RegisterEmailDto)
+    const { password, ...userData } = data as any;
+    
+    const user = await this.prismaService.client.user.create({
       data: {
         firebaseUid,
-        ...data,
+        ...userData,
       },
     });
+    return this.transformPrismaUser(user);
   }
 
   async findByFirebaseUid(firebaseUid: string): Promise<UserEntity | null> {
-    return this.prismaService.client.user.findUnique({ where: { firebaseUid } });
+    const user = await this.prismaService.client.user.findUnique({ where: { firebaseUid } });
+    return user ? this.transformPrismaUser(user) : null;
   }
 
   async updateLoginInfo(id: string): Promise<UserEntity> {
-    return this.prismaService.client.user.update({
+    const user = await this.prismaService.client.user.update({
       where: { id },
       data: { lastLogin: new Date(), failedAttempts: 0 },
     });
+    return this.transformPrismaUser(user);
   }
 }

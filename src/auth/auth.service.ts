@@ -15,17 +15,25 @@ export class AuthService {
   ) {}
 
   async registerWithEmail(dto: RegisterEmailDto): Promise<UserEntity> {
-    const record = await this.firebaseService.createUser(dto.email, dto.password, dto.fullName);
+    const record = (await this.firebaseService.createUser(
+      dto.email,
+      dto.password,
+      dto.fullName,
+    )) as { uid: string };
     return this.usersService.create(record.uid, dto);
   }
 
   async registerWithMicrosoft(dto: RegisterMicrosoftDto): Promise<UserEntity> {
-    const decoded = await this.firebaseService.verifyIdToken(dto.idToken);
+    const decoded = (await this.firebaseService.verifyIdToken(dto.idToken)) as {
+      uid: string;
+    };
     return this.usersService.create(decoded.uid, dto);
   }
 
   private async validateToken(idToken: string): Promise<UserEntity> {
-    const decoded = await this.firebaseService.verifyIdToken(idToken);
+    const decoded = (await this.firebaseService.verifyIdToken(idToken)) as {
+      uid: string;
+    };
     const user = await this.usersService.findByFirebaseUid(decoded.uid);
     if (!user) {
       throw new UnauthorizedException('Usuário não registrado');

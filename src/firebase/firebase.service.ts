@@ -1,7 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const admin: any = require('firebase-admin');
+import * as admin from 'firebase-admin';
+
+interface UserRecord {
+  uid: string;
+  email: string;
+  displayName?: string;
+}
+
+interface DecodedIdToken {
+  uid: string;
+  email: string;
+  [key: string]: any;
+}
 
 @Injectable()
 export class FirebaseService {
@@ -27,11 +38,15 @@ export class FirebaseService {
     return this.app.auth();
   }
 
-  async createUser(email: string, password: string, displayName: string) {
-    return this.auth().createUser({ email, password, displayName });
+  async createUser(
+    email: string,
+    password: string,
+    displayName: string,
+  ): Promise<UserRecord> {
+    return await this.auth().createUser({ email, password, displayName });
   }
 
-  async verifyIdToken(idToken: string) {
-    return this.auth().verifyIdToken(idToken);
+  async verifyIdToken(idToken: string): Promise<DecodedIdToken> {
+    return await this.auth().verifyIdToken(idToken);
   }
 }
