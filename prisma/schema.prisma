@@ -14,6 +14,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum FileOwnerType {
+  CASE
+  CONTRACT
+  CLIENT
+  INVOICE
+  MISC
+}
+
+model File {
+  id         String    @id @default(uuid())
+  name       String
+  extension  String
+  baseUrl    String
+  folder     String
+  file       String
+  url        String    @unique
+  size       Int
+  contentType String?
+  eTag       String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  links      FileLink[]
+}
+
+model FileLink {
+  id           String       @id @default(uuid())
+  fileId       String
+  ownerType    FileOwnerType
+  organizationId String?
+  clientId     String?
+  contractId   String?
+  caseId       String?
+  invoiceId    String?
+  label        String?
+  documentType String?
+  createdAt    DateTime     @default(now())
+
+  file         File         @relation(fields: [fileId], references: [id], onDelete: Cascade)
+}
+
 enum UserRole {
   ADMIN
   ADVOGADO
