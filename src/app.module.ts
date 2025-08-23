@@ -9,6 +9,8 @@ import { AuthModule } from './auth/auth.module';
 import { FilesModule } from './files/files.module';
 import { S3Module } from './s3/s3.module';
 import { FileLinksModule } from './file-links/file-links.module';
+import { ClientsModule } from './clients/clients.module';
+import { ContractsModule } from './contracts/contracts.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { FileLinksModule } from './file-links/file-links.module';
     FilesModule,
     S3Module,
     FileLinksModule,
+    ClientsModule,
+    ContractsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -13,7 +13,7 @@ export class UsersService {
       phone: prismaUser.phone ?? undefined,
       cpf: prismaUser.cpf ?? undefined,
       oab: prismaUser.oab ?? undefined,
-      profilePhoto: prismaUser.profilePhoto ?? undefined,
+      profileFileId: prismaUser.profileFileId ?? undefined,
       lastLogin: prismaUser.lastLogin ?? undefined,
       department: prismaUser.department ?? undefined,
       unit: prismaUser.unit ?? undefined,
@@ -24,7 +24,7 @@ export class UsersService {
   async create(firebaseUid: string, data: CreateUserDto): Promise<UserEntity> {
     // Extract password from data if it exists (for RegisterEmailDto)
     const { password, ...userData } = data as any;
-    
+
     const user = await this.prismaService.client.user.create({
       data: {
         firebaseUid,
@@ -35,7 +35,9 @@ export class UsersService {
   }
 
   async findByFirebaseUid(firebaseUid: string): Promise<UserEntity | null> {
-    const user = await this.prismaService.client.user.findUnique({ where: { firebaseUid } });
+    const user = await this.prismaService.client.user.findUnique({
+      where: { firebaseUid },
+    });
     return user ? this.transformPrismaUser(user) : null;
   }
 
@@ -43,6 +45,14 @@ export class UsersService {
     const user = await this.prismaService.client.user.update({
       where: { id },
       data: { lastLogin: new Date(), failedAttempts: 0 },
+    });
+    return this.transformPrismaUser(user);
+  }
+
+  async setProfileFile(id: string, fileId: string): Promise<UserEntity> {
+    const user = await this.prismaService.client.user.update({
+      where: { id },
+      data: { profileFileId: fileId },
     });
     return this.transformPrismaUser(user);
   }

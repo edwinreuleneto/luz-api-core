@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEmail, IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { UserRole } from '../entities/user.enums';
 
 export class CreateUserDto {
@@ -28,8 +35,8 @@ export class CreateUserDto {
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsString()
-  profilePhoto?: string;
+  @IsUUID()
+  profileFileId?: string;
 
   @ApiProperty({ enum: UserRole, default: UserRole.CLIENTE })
   @IsOptional()
