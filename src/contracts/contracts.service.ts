@@ -1,21 +1,29 @@
 // Services
 import { Injectable } from '@nestjs/common';
+import { Contract, File } from '@prisma/client';
+
 import { PrismaService } from '../prisma/prisma.service';
-import { ContractEntity } from './entities/contract.entity';
+import { FileEntity } from '../files/entities/file.entity';
 import { CreateContractDto } from './dto/create-contract.dto';
-import { UpdateContractDto } from './dto/update-contract.dto';
 import { LinkContractDto } from './dto/link-contract.dto';
+import { UpdateContractDto } from './dto/update-contract.dto';
+import { ContractEntity } from './entities/contract.entity';
 
 @Injectable()
 export class ContractsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private transform(contract: any): ContractEntity {
+  private transform(
+    contract: Contract & { file?: File | null },
+  ): ContractEntity {
     return {
       ...contract,
       clientId: contract.clientId ?? undefined,
       fileId: contract.fileId ?? undefined,
-    };
+      file: contract.file
+        ? (contract.file as unknown as FileEntity)
+        : undefined,
+    } as ContractEntity;
   }
 
   async create(dto: CreateContractDto): Promise<ContractEntity> {
