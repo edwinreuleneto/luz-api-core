@@ -12,11 +12,18 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ContractsService } from './contracts.service';
 import { SetFileDto } from '../files/dto/set-file.dto';
 import { AddResponsibleDto } from './dto/add-responsible.dto';
+import { LinkContractDto } from './dto/link-contract.dto';
 
 @ApiTags('contracts')
 @Controller('api/v1/contracts')
 export class ContractsController {
   constructor(private readonly contractsService: ContractsService) {}
+
+  @Post()
+  @ApiOperation({ summary: 'Vincular contrato publicado a cliente' })
+  linkToClient(@Body() dto: LinkContractDto) {
+    return this.contractsService.linkToClient(dto);
+  }
 
   @Patch(':id/file')
   @ApiOperation({ summary: 'Definir arquivo principal (fileId) do contrato' })

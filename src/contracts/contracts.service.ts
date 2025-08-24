@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { ContractEntity } from './entities/contract.entity';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
+import { LinkContractDto } from './dto/link-contract.dto';
 
 @Injectable()
 export class ContractsService {
@@ -19,6 +20,25 @@ export class ContractsService {
 
   async create(dto: CreateContractDto): Promise<ContractEntity> {
     const contract = await this.prisma.client.contract.create({ data: dto });
+    return this.transform(contract);
+  }
+
+  async linkToClient(dto: LinkContractDto): Promise<ContractEntity> {
+    const { organizationId } =
+      await this.prisma.client.client.findUniqueOrThrow({
+        where: { id: dto.clientId },
+        select: { organizationId: true },
+      });
+
+    const contract = await this.prisma.client.contract.create({
+      data: {
+        title: dto.title,
+        fileId: dto.fileId,
+        clientId: dto.clientId,
+        organizationId,
+      },
+    });
+
     return this.transform(contract);
   }
 
