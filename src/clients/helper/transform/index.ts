@@ -16,4 +16,3 @@ export function transformClient(prismaClient: any): ClientEntity {
     docMainFileId: prismaClient.docMainFileId ?? undefined,
   };
 }
-

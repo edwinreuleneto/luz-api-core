@@ -1,7 +1,8 @@
 // DTOs
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString, IsUUID, IsEmail } from 'class-validator';
-import { PersonType } from '@prisma/client';
+
+import { PersonType } from '../../../generated/prisma';
 
 export class CreateClientDto {
   @ApiProperty()
