@@ -11,6 +11,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { FilesService } from '../files/files.service';
+import { FilesUploadService } from '../files/files-upload.service';
 import { PresignDto } from './dto/presign.dto';
 import { UploadDocumentDto } from './dto/upload-document.dto';
 import { UploadDto } from './dto/upload.dto';
@@ -22,6 +23,7 @@ export class S3Controller {
   constructor(
     private readonly s3Service: S3Service,
     private readonly filesService: FilesService,
+    private readonly filesUploadService: FilesUploadService,
   ) {}
 
   @Post('presign')
@@ -48,7 +50,9 @@ export class S3Controller {
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
-  @ApiOperation({ summary: 'Upload de documento diretamente para o S3' })
+  @ApiOperation({
+    summary: 'Upload de documento para o S3 salvando metadados em File',
+  })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -67,9 +71,6 @@ export class S3Controller {
       throw new BadRequestException('Arquivo é obrigatório');
     }
     const folder = dto.folder ?? 'public';
-    if (folder.includes('..')) {
-      throw new BadRequestException('Pasta inválida');
-    }
-    return this.s3Service.uploadDocument(file, folder);
+    return this.filesUploadService.upload(file, folder);
   }
 }
