@@ -29,13 +29,11 @@ describe('ClientsService', () => {
   describe('create', () => {
     it('should create a client', async () => {
       const dto: CreateClientDto = {
-        organizationId: 'org1',
         personType: PersonType.PF,
         fullName: 'John Doe',
       };
       const prismaResponse = {
         id: '1',
-        organizationId: dto.organizationId,
         personType: dto.personType,
         fullName: dto.fullName,
         companyName: null,

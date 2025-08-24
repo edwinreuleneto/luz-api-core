@@ -7,9 +7,6 @@ export class ClientEntity {
   @ApiProperty()
   id!: string;
 
-  @ApiProperty()
-  organizationId!: string;
-
   @ApiProperty({ enum: PersonType })
   personType!: PersonType;
 

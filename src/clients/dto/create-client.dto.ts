@@ -5,10 +5,6 @@ import { IsEnum, IsOptional, IsString, IsUUID, IsEmail } from 'class-validator';
 import { PersonType } from '../../../generated/prisma';
 
 export class CreateClientDto {
-  @ApiProperty()
-  @IsUUID()
-  organizationId!: string;
-
   @ApiProperty({ enum: PersonType })
   @IsEnum(PersonType)
   personType!: PersonType;

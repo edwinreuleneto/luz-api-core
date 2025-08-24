@@ -8,9 +8,6 @@ export class ContractEntity {
   @ApiProperty()
   title!: string;
 
-  @ApiProperty()
-  organizationId!: string;
-
   @ApiProperty({ required: false })
   clientId?: string;
 

@@ -43,7 +43,6 @@ model FileLink {
   id           String       @id @default(uuid())
   fileId       String
   ownerType    FileOwnerType
-  organizationId String?
   clientId     String?
   contractId   String?
   caseId       String?
@@ -103,7 +102,6 @@ model User {
 
 model Client {
   id             String   @id @default(uuid())
-  organizationId String
   personType     PersonType
   fullName       String?
   companyName    String?
@@ -129,7 +127,6 @@ model Client {
 model Contract {
   id             String   @id @default(uuid())
   title          String
-  organizationId String
   clientId       String?
   client         Client?  @relation(fields: [clientId], references: [id], onDelete: SetNull)
   fileId         String?

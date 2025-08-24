@@ -7,10 +7,6 @@ export class CreateContractDto {
   @IsString()
   title!: string;
 
-  @ApiProperty()
-  @IsUUID()
-  organizationId!: string;
-
   @ApiProperty({ required: false })
   @IsOptional()
   @IsUUID()
