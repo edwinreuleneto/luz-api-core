@@ -1,9 +1,18 @@
 // Controllers
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { FilesService } from '../files/files.service';
 import { PresignDto } from './dto/presign.dto';
+import { UploadDocumentDto } from './dto/upload-document.dto';
 import { UploadDto } from './dto/upload.dto';
 import { S3Service } from './s3.service';
 
@@ -21,7 +30,11 @@ export class S3Controller {
     if (!dto.key || dto.key.includes('..')) {
       throw new BadRequestException('Chave inválida');
     }
-    return this.s3Service.presignPut(dto.key, dto.contentType, dto.expiresSeconds);
+    return this.s3Service.presignPut(
+      dto.key,
+      dto.contentType,
+      dto.expiresSeconds,
+    );
   }
 
   @Post('complete-upload')
@@ -32,5 +45,31 @@ export class S3Controller {
     }
     return this.filesService.createOrUpsert(dto);
   }
-}
 
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ summary: 'Upload de documento diretamente para o S3' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        folder: { type: 'string', example: 'contracts', nullable: true },
+        file: { type: 'string', format: 'binary' },
+      },
+    },
+  })
+  async upload(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() dto: UploadDocumentDto,
+  ) {
+    if (!file) {
+      throw new BadRequestException('Arquivo é obrigatório');
+    }
+    const folder = dto.folder ?? 'public';
+    if (folder.includes('..')) {
+      throw new BadRequestException('Pasta inválida');
+    }
+    return this.s3Service.uploadDocument(file, folder);
+  }
+}
