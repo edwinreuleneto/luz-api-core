@@ -24,18 +24,11 @@ export class ContractsService {
   }
 
   async linkToClient(dto: LinkContractDto): Promise<ContractEntity> {
-    const { organizationId } =
-      await this.prisma.client.client.findUniqueOrThrow({
-        where: { id: dto.clientId },
-        select: { organizationId: true },
-      });
-
     const contract = await this.prisma.client.contract.create({
       data: {
         title: dto.title,
         fileId: dto.fileId,
         clientId: dto.clientId,
-        organizationId,
       },
     });
 

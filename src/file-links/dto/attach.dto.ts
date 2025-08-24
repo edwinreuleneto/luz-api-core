@@ -22,11 +22,6 @@ export class AttachDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
-  organizationId?: string;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
   clientId?: string;
 
   @ApiProperty({ required: false })
@@ -54,4 +49,3 @@ export class AttachDto {
   @IsString()
   documentType?: string;
 }
-
