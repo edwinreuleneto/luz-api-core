@@ -2,7 +2,8 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
-import { PersonType } from '@prisma/client';
+
+import { PersonType } from '../../../generated/prisma';
 
 export class ClientQueryDto {
   @ApiPropertyOptional()
