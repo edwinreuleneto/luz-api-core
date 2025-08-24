@@ -2,6 +2,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -13,6 +14,7 @@ import { ContractsService } from './contracts.service';
 import { SetFileDto } from '../files/dto/set-file.dto';
 import { AddResponsibleDto } from './dto/add-responsible.dto';
 import { LinkContractDto } from './dto/link-contract.dto';
+import { ContractEntity } from './entities/contract.entity';
 
 @ApiTags('contracts')
 @Controller('api/v1/contracts')
@@ -41,5 +43,13 @@ export class ContractsController {
     @Body() dto: AddResponsibleDto,
   ) {
     return this.contractsService.addResponsible(id, dto.userId);
+  }
+
+  @Get('user/:userId')
+  @ApiOperation({ summary: 'Listar contratos associados a um usuário' })
+  async findAllByUser(
+    @Param('userId', new ParseUUIDPipe()) userId: string,
+  ): Promise<ContractEntity[]> {
+    return await this.contractsService.findAllByUser(userId);
   }
 }
