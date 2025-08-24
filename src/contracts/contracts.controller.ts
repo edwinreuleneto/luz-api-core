@@ -2,6 +2,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -18,6 +19,12 @@ import { LinkContractDto } from './dto/link-contract.dto';
 @Controller('api/v1/contracts')
 export class ContractsController {
   constructor(private readonly contractsService: ContractsService) {}
+
+  @Get('user/:userId')
+  @ApiOperation({ summary: 'Listar contratos do usuário' })
+  findAllByUser(@Param('userId', new ParseUUIDPipe()) userId: string) {
+    return this.contractsService.findAllByUser(userId);
+  }
 
   @Post()
   @ApiOperation({ summary: 'Vincular contrato publicado a cliente' })
