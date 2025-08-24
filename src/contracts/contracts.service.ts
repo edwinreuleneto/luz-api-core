@@ -43,6 +43,16 @@ export class ContractsService {
     return this.transform(contract);
   }
 
+  async findAllByUser(userId: string): Promise<ContractEntity[]> {
+    const contracts = await this.prisma.client.contract.findMany({
+      where: { responsibleUsers: { some: { userId } } },
+      include: { file: true },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return contracts.map((contract) => this.transform(contract));
+  }
+
   async findOne(id: string): Promise<ContractEntity> {
     const contract = await this.prisma.client.contract.findUniqueOrThrow({
       where: { id },

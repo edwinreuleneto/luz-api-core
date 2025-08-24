@@ -21,6 +21,12 @@ import { ContractEntity } from './entities/contract.entity';
 export class ContractsController {
   constructor(private readonly contractsService: ContractsService) {}
 
+  @Get('user/:userId')
+  @ApiOperation({ summary: 'Listar contratos do usuário' })
+  findAllByUser(@Param('userId', new ParseUUIDPipe()) userId: string) {
+    return this.contractsService.findAllByUser(userId);
+  }
+
   @Post()
   @ApiOperation({ summary: 'Vincular contrato publicado a cliente' })
   linkToClient(@Body() dto: LinkContractDto) {
